@@ -175,10 +175,11 @@ def main():
     status = 0.0
 
     twist_msg = TwistMsg()
-    keys= ['i', 'o', 'j', 'l', 'u', ',', '.', 'q', 'z', 'w', 'x', 'e', 'c']
-    random_characters = random.sample(keys, 1)
-    print(random_characters[0])
-    key = get_key_sim(random_characters) 
+    move_choice = ['i', 'o', 'j', 'l', 'u', ',', '.']
+    speed_choice =  ['q', 'z', 'w', 'x', 'e', 'c']
+#    random_characters = random.sample(input_keys, 1)
+ #   print(random_characters[0])
+  #  key = get_key_sim(random_characters) 
 
     if stamped:
         twist = twist_msg.twist
@@ -190,39 +191,46 @@ def main():
     try:
        # print(msg)
         #print(vels(speed, turn))
-        while True:
+        for m in  move_choice:
+            for s in speed_choice:
+            
+        #while True:
             #get_key_sim()
             #print(key)
-            if key in moveBindings.keys():
-                x = moveBindings[key][0]
-                y = moveBindings[key][1]
-                z = moveBindings[key][2]
-                th = moveBindings[key][3]
-            elif key in speedBindings.keys():
-                speed = speed * speedBindings[key][0]
-                turn = turn * speedBindings[key][1]
+                if m in moveBindings.keys():
+                    x = moveBindings[m][0]
+                    y = moveBindings[m][1]
+                    z = moveBindings[m][2]
+                    th = moveBindings[m][3]
 
-                print(vels(speed, turn))
-                if (status == 14):
-                    print(msg)
-                status = (status + 1) % 15
-            else:
-                x = 0.0
-                y = 0.0
-                z = 0.0
-                th = 0.0
-                if (key == '\x03'):
-                    break
+                if m in speedBindings.keys():
+                    speed = speed * speedBindings[s][0]
+                    turn = turn * speedBindings[s][1]
+
+                    print(vels(speed, turn))
+                    if (status == 14):
+                        print(msg)
+                    status = (status + 1) % 15
+                else:
+                    x = 0.0
+                    y = 0.0
+                    z = 0.0
+                    th = 0.0
+                print(msg)
+                time.sleep(.2)
+        #  if (key == '\x03'):
+        #     break
 
             if stamped:
                 twist_msg.header.stamp = node.get_clock().now().to_msg()
-
+                print(twist_msg.header)
             twist.linear.x = x * speed
             twist.linear.y = y * speed
             twist.linear.z = z * speed
             twist.angular.x = 0.0
             twist.angular.y = 0.0
             twist.angular.z = th * turn
+            
             pub.publish(twist_msg)
 
     except Exception as e:
